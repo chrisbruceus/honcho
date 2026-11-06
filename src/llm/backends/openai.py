@@ -106,6 +106,14 @@ def extract_openai_cache_tokens(usage: Any) -> tuple[int, int]:
     return cache_creation, cache_read
 
 
+def _normalize_openai_tool_choice(
+    tool_choice: str | dict[str, Any] | None,
+) -> str | dict[str, Any] | None:
+    if tool_choice == "any":
+        return "required"
+    return tool_choice
+
+
 class OpenAIBackend:
     """Provider backend wrapping AsyncOpenAI."""
 
@@ -309,7 +317,7 @@ class OpenAIBackend:
         if tools:
             params["tools"] = self._convert_tools(tools)
             if tool_choice is not None:
-                params["tool_choice"] = tool_choice
+                params["tool_choice"] = _normalize_openai_tool_choice(tool_choice)
         if extra_params:
             for key in (
                 "top_p",

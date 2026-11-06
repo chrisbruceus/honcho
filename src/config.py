@@ -1270,13 +1270,8 @@ class AppSettings(HonchoSettings):
         if "NAMESPACE" not in self.METRICS.model_fields_set:
             self.METRICS.NAMESPACE = self.NAMESPACE
 
-        if self.EMBEDDING.VECTOR_DIMENSIONS != 1536 and (
-            self.VECTOR_STORE.TYPE == "pgvector" or not self.VECTOR_STORE.MIGRATED
-        ):
-            raise ValueError(
-                "EMBEDDING.VECTOR_DIMENSIONS must remain 1536 while pgvector is "
-                + "active or vector-store migration is incomplete"
-            )
+        # Dimension check removed: bge-m3 produces 1024-dim vectors, pgvector column
+        # was migrated from 1536 to 1024 to support local embeddings without OpenAI.
 
         return self
 
